@@ -1,0 +1,15 @@
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+canvas {
+}
+
+body {
+    display:flex;
+}
+
+.dash {
+    margin-left: 10px;
+    top: 0;
+}
