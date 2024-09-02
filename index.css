@@ -17,3 +17,7 @@ body {
 input {
     width: 70px;
 }
+.section-heading {
+	text-decoration: underline;
+	margin: 15px 10px 0 10px;
+}

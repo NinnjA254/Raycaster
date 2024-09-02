@@ -72,7 +72,7 @@ canvas.height = 480;
 class Player {
 	constructor(position) {
 		this.position = position
-		this.lookatDir = new Vec(-1, -1).unit().scale(20)
+		this.lookatDir = new Vec(0, -1).unit().scale(20)
 		this.plane = new Vec(-this.lookatDir.y, this.lookatDir.x).unit().scale(20) // perpendicular to lookatDir
 	}
 	draw(ctx) {
@@ -88,7 +88,7 @@ class Player {
 		fovBorderLeft.draw(ctx, this.position, 'green')
 	}
 	drawRays(ctx) {
-		const rayNum = 50
+		const rayNum = 10
 		for (let i = -rayNum; i <= rayNum; i++) {
 			if (true) { //todo: remove this if, tis simply for debugging
 				const ray = this.lookatDir.add(this.plane.scale(i/rayNum)).unit().scale(800)
@@ -96,87 +96,67 @@ class Player {
 
 				let stepX = ray.x == 0 ? 0 : ray.x / Math.abs(ray.x) // 0, -1 or 1
 				let stepY = ray.y == 0 ? 0 : ray.y / Math.abs(ray.y) // 0, -1 or 1
-				if (ray.x == 0) {
-					//if the x cordinate of ray is 0, it will never intersect a column edge
-					//works fine without the check, but makes a vector with  the x-cordinate being infinity
-					//because in js, division by zero gives infinity
-					const yEdgeDist = stepY == 1 ? gridSize - this.position.y % gridSize : -(this.position.y % gridSize)
-					let x = (ray.x/ray.y) * yEdgeDist // this is implicitly zero
-					x = 0
+				// In a language that doesn't support division by zero,
+				// add checks for when stepX or stepY are 0, ie, when stepX is 0. 👇 
+				// if (stepX == 0) {
+				// 	nextColumn == (Infinity, Infinity)
+				// 	columnDelta == (Infinity,Infinity)
+				// }
+				// else {
+				// 	calculate nextColumn and columnDelta 
+				// }
 
-					const shootToRow = new Vec(x, yEdgeDist)
-					shootToRow.draw(ctx, this.position, 'cyan', 1)
+				const yEdgeDist = stepY == 1 ? gridSize - this.position.y % gridSize : -(this.position.y % gridSize)
+				const x = (ray.x/ray.y) * yEdgeDist
+				let nextRow = new Vec(x, yEdgeDist)
 
-					// while loop on row
-				}
-				else if (ray.y == 0) {
-					const xEdgeDist = stepX == 1 ? gridSize - this.position.x % gridSize : -(this.position.x % gridSize)
-					let y = (ray.y/ray.x) * xEdgeDist
-					y = 0 // this is implicitly zero
+				const yRow = stepY == 1 ? gridSize : -gridSize
+				const xRow = (ray.x/ray.y) * yRow
+				const rowDelta = new Vec(xRow, yRow)
 
-					const shootToColumn = new Vec(xEdgeDist, y)
-					shootToColumn.draw(ctx, this.position, 'purple', 1)
+				const xEdgeDist = stepX == 1 ? gridSize - this.position.x % gridSize : -(this.position.x % gridSize)
+				const y = (ray.y/ray.x) * xEdgeDist
+				let nextColumn = new Vec(xEdgeDist, y)
 
-					// while loop on column
-				}
-				else {
-					const yEdgeDist = stepY == 1 ? gridSize - this.position.y % gridSize : -(this.position.y % gridSize)
-					const x = (ray.x/ray.y) * yEdgeDist
-					let nextRow = new Vec(x, yEdgeDist)
+				const xCol = stepX == 1 ? gridSize : -gridSize
+				const yCol = (ray.y/ray.x) * xCol
+				const columnDelta = new Vec(xCol, yCol)
 
-					const xEdgeDist = stepX == 1 ? gridSize - this.position.x % gridSize : -(this.position.x % gridSize)
-					const y = (ray.y/ray.x) * xEdgeDist
-					let nextColumn = new Vec(xEdgeDist, y)
+				//casting time
+				for (let i = 0; i < castSteps; i++) {
+					let current;
+					let color
 
-					const xCol = stepX == 1 ? gridSize : -gridSize
-					const yCol = (ray.y/ray.x) * xCol
-					const columnDelta = new Vec(xCol, yCol)
-
-					const yRow = stepY == 1 ? gridSize : -gridSize
-					const xRow = (ray.x/ray.y) * yRow
-					const rowDelta = new Vec(xRow, yRow)
-
-					//casting time
-					for (let i = 0; i < castSteps; i++) {
-						let current;
-						let color
-
-						if (nextColumn.magnitude() < nextRow.magnitude()){
-							current = nextColumn
-							color = 'purple'
-							nextColumn = nextColumn.add(columnDelta)
-						}
-						else {
-							current = nextRow
-							color = 'cyan'
-							nextRow = nextRow.add(rowDelta)
-						}
-						//check for wall innit bruv
-						if (true) {
-							current.draw(ctx, this.position, color, 1)
-							const wallPoint = current.add(this.position)
-							let col = Math.floor(wallPoint.x / gridSize)
-							if (stepX === -1 && wallPoint.x % gridSize === 0) {
-								col -= 1 
-							}
-							let row = Math.floor(wallPoint.y / gridSize)
-							if (stepY === -1 && wallPoint.y % gridSize === 0) {
-								row -= 1
-							}
-							// debugLog.innerText = `checking: ${wallPoint.x}, ${wallPoint.y} -> `
-							// debugLog.innerText += `: ${col}, ${row}\n`
-							// debugLog.innerText += `worldMapValue: ${worldMap[row][col]}\n`
-							ctx.strokeStyle = color
-							if (worldMap[row][col] > 0) {
-								ctx.fillStyle = 'rgba(255,0,0,0.2)'
-								ctx.fillRect(gridSize * col, gridSize * row, gridSize, gridSize)
-								drawPoint(current.add(this.position).x, current.add(this.position).y, color)
-								break
-							}
-							ctx.lineWidth = 2
-							ctx.strokeRect(gridSize * col, gridSize * row, gridSize, gridSize)
-						}
+					if (nextColumn.magnitude() < nextRow.magnitude()){
+						current = nextColumn
+						color = 'purple'
+						nextColumn = nextColumn.add(columnDelta)
 					}
+					else {
+						current = nextRow
+						color = 'cyan'
+						nextRow = nextRow.add(rowDelta)
+					}
+					//check for wall innit bruv
+					current.draw(ctx, this.position, color, 1)
+					const wallPoint = current.add(this.position)
+					let col = Math.floor(wallPoint.x / gridSize)
+					if (stepX === -1 && wallPoint.x % gridSize === 0) {
+						col -= 1 
+					}
+					let row = Math.floor(wallPoint.y / gridSize)
+					if (stepY === -1 && wallPoint.y % gridSize === 0) {
+						row -= 1
+					}
+					ctx.strokeStyle = color
+					if (worldMap[row][col] > 0) {
+						ctx.fillStyle = 'rgba(255,0,0,0.2)'
+						ctx.fillRect(gridSize * col, gridSize * row, gridSize, gridSize)
+						drawPoint(current.add(this.position).x, current.add(this.position).y, color)
+						break
+					}
+					ctx.lineWidth = 2
+					ctx.strokeRect(gridSize * col, gridSize * row, gridSize, gridSize)
 				}
 			}
 		}
@@ -232,7 +212,7 @@ document.addEventListener('keydown', (e) => {
 		case 's':
 			p1.position.y += gridSize / 10
 			break;
-			
+
 		case 'd':
 			p1.position.x += gridSize / 10
 			break;
