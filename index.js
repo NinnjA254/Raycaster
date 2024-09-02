@@ -91,7 +91,7 @@ class Player {
 		const rayNum = 10
 		for (let i = -rayNum; i <= rayNum; i++) {
 			if (true) { //todo: remove this if, tis simply for debugging
-				const ray = this.lookatDir.add(this.plane.scale(i/rayNum)).unit().scale(800)
+				const ray = this.lookatDir.add(this.plane.scale(i/rayNum)).unit()
 				// ray.draw(ctx, this.position, 'rgba(255,255,0,0.7)', 1)
 
 				let stepX = ray.x == 0 ? 0 : ray.x / Math.abs(ray.x) // 0, -1 or 1
