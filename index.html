@@ -1,18 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Raycaster</title>
-	<script src='vector.js' defer></script>
-	<script src='index.js' defer></script>
-	<link rel="stylesheet" href="index.css">
-		
-</head>
-<body>
-    <canvas></canvas>
-    <div class="dash">
-	<p id="playerPos">playerpos</p>
-    </div>
-</body>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Raycaster</title>
+		<script src='vector.js' defer></script>
+		<script src='index.js' defer></script>
+		<link rel="stylesheet" href="index.css">
+
+	</head>
+	<body>
+		<canvas></canvas>
+		<div class="dash">
+			<p id="playerPos">playerpos</p>
+			lookat: <input type="number" name="" value="10" id="lx"/>
+			<input type="number" name="" value="10" id="ly"/>
+			<div>
+				cast steps: <input type="number" name="" value="1" id="cast_steps"/>
+			</div>
+			<div>
+				debug log: <span id='dlog'></span>
+			</div>
+		</div>
+	</body>
 </html>

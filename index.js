@@ -11,145 +11,269 @@ const ctx = canvas.getContext('2d');
 // window.addEventListener('resize', resizeCanvas);
 
 
-function drawPoint(x, y) {
-    ctx.beginPath()
-    ctx.arc(x, y, 5, 0, Math.PI * 2, true);
-    ctx.strokeStyle = 'blue';
-    ctx.fillStyle = 'rgba(0, 255, 255, 1)';
-    ctx.lineWidth = 5;
-    ctx.fill()
+function drawPoint(x, y, fill='rgba(0, 255, 255, 1)') {
+	ctx.beginPath()
+	ctx.arc(x, y, 5, 0, Math.PI * 2, true);
+	ctx.strokeStyle = 'blue';
+	ctx.fillStyle = fill;
+	ctx.lineWidth = 5;
+	ctx.fill()
 }
 function drawFuturisticPoint(x, y) {
-    // Draw the outer glow
-    const outerRadius = 2;
-    const gradient = ctx.createRadialGradient(x, y, 0, x, y, outerRadius);
-    gradient.addColorStop(0, 'rgba(0, 255, 255, 0.3)');
-    gradient.addColorStop(1, 'rgba(0, 255, 255, 0)');
-    ctx.beginPath();
-    ctx.arc(x, y, outerRadius, 0, Math.PI * 2);
-    ctx.fillStyle = gradient;
-    ctx.fill();
+	// Draw the outer glow
+	const outerRadius = 2;
+	const gradient = ctx.createRadialGradient(x, y, 0, x, y, outerRadius);
+	gradient.addColorStop(0, 'rgba(0, 255, 255, 0.3)');
+	gradient.addColorStop(1, 'rgba(0, 255, 255, 0)');
+	ctx.beginPath();
+	ctx.arc(x, y, outerRadius, 0, Math.PI * 2);
+	ctx.fillStyle = gradient;
+	ctx.fill();
 
-    // Draw the main point (inner circle)
-    const innerRadius = 4;
-    ctx.beginPath();
-    ctx.arc(x, y, innerRadius, 0, Math.PI * 2);
-    ctx.fillStyle = 'cyan';
-    ctx.fill();
+	// Draw the main point (inner circle)
+	const innerRadius = 4;
+	ctx.beginPath();
+	ctx.arc(x, y, innerRadius, 0, Math.PI * 2);
+	ctx.fillStyle = 'cyan';
+	ctx.fill();
 }
 
 const worldMap =
-[
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1],
-  [1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1],
-  [1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-];
-const gridSize = 45;
+	[
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1],
+		[1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1],
+		[1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1],
+		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+	];
+const gridSize = 50;
 canvas.width = 640;
 canvas.height = 480;
 
 class Player {
-    constructor(position) {
-	this.position = position
-	this.lookatDir = new Vec(0, -5).unit().scale(20)
-	this.plane = new Vec(-this.lookatDir.y, this.lookatDir.x).unit().scale(20)
-    }
-    draw(ctx) {
-	drawPoint(this.position.x, this.position.y)
-	this.position.draw(ctx, origin, 'blue')
-	// this.lookatDir.draw(ctx, this.position, 'red')
-	this.plane.draw(ctx, this.position.add(this.lookatDir), 'green')
-	this.plane.scale(-1).draw(ctx, this.position.add(this.lookatDir), 'green')
-
-	const fovBorderLeft = this.lookatDir.add(this.plane).unit().scale(180)
-	const fovBorderRight = this.lookatDir.add(this.plane.scale(-1)).unit().scale(180)
-	fovBorderRight.draw(ctx, this.position, 'green')
-	fovBorderLeft.draw(ctx, this.position, 'green')
-    }
-    drawRays(ctx) {
-	const rayNum = 10
-	for (let i = -rayNum; i <= rayNum; i++) {
-	    if (true) { //todo: remove this if, tis simply for debugging
-		const ray = this.lookatDir.add(this.plane.scale(i/rayNum)).unit().scale(800)
-		ray.draw(ctx, this.position, 'rgba(255,255,0,0.9)', 1)
-
-		let stepX 
-		if (ray.x < 0)
-		    stepX = -1
-		else if (ray.x > 0)
-		    stepX = 1
-		else
-		    stepX = 0
-		if (stepX != 0) {
-		    //if the x cordinate of ray is 0, it will never intersect a column edge
-		    //works fine without the check, but makes a vector with  the x-cordinate being infinity
-		    //because in js, division by zero gives infinity
-		    const xEdgeDist = stepX == 1 ? gridSize - this.position.x % gridSize : -(this.position.x % gridSize)
-		    const y = (ray.y/ray.x) * xEdgeDist
-		    const raytoEdge = Math.sqrt(xEdgeDist * xEdgeDist + y * y)
-
-		    const hehe = new Vec(xEdgeDist, y)
-		    // console.log(raytoEdge, hehe.magnitude())
-		    hehe.draw(ctx, this.position, 'purple', 1)
-		}
-
-	    }
+	constructor(position) {
+		this.position = position
+		this.lookatDir = new Vec(-1, -1).unit().scale(20)
+		this.plane = new Vec(-this.lookatDir.y, this.lookatDir.x).unit().scale(20) // perpendicular to lookatDir
 	}
-    }
+	draw(ctx) {
+		drawPoint(this.position.x, this.position.y)
+		this.position.draw(ctx, origin, 'blue')
+		this.lookatDir.draw(ctx, this.position, 'red')
+		this.plane.draw(ctx, this.position.add(this.lookatDir), 'green')
+		this.plane.scale(-1).draw(ctx, this.position.add(this.lookatDir), 'green')
+
+		const fovBorderLeft = this.lookatDir.add(this.plane).unit().scale(180)
+		const fovBorderRight = this.lookatDir.add(this.plane.scale(-1)).unit().scale(180)
+		fovBorderRight.draw(ctx, this.position, 'green')
+		fovBorderLeft.draw(ctx, this.position, 'green')
+	}
+	drawRays(ctx) {
+		const rayNum = 50
+		for (let i = -rayNum; i <= rayNum; i++) {
+			if (true) { //todo: remove this if, tis simply for debugging
+				const ray = this.lookatDir.add(this.plane.scale(i/rayNum)).unit().scale(800)
+				// ray.draw(ctx, this.position, 'rgba(255,255,0,0.7)', 1)
+
+				let stepX = ray.x == 0 ? 0 : ray.x / Math.abs(ray.x) // 0, -1 or 1
+				let stepY = ray.y == 0 ? 0 : ray.y / Math.abs(ray.y) // 0, -1 or 1
+				if (ray.x == 0) {
+					//if the x cordinate of ray is 0, it will never intersect a column edge
+					//works fine without the check, but makes a vector with  the x-cordinate being infinity
+					//because in js, division by zero gives infinity
+					const yEdgeDist = stepY == 1 ? gridSize - this.position.y % gridSize : -(this.position.y % gridSize)
+					let x = (ray.x/ray.y) * yEdgeDist // this is implicitly zero
+					x = 0
+
+					const shootToRow = new Vec(x, yEdgeDist)
+					shootToRow.draw(ctx, this.position, 'cyan', 1)
+
+					// while loop on row
+				}
+				else if (ray.y == 0) {
+					const xEdgeDist = stepX == 1 ? gridSize - this.position.x % gridSize : -(this.position.x % gridSize)
+					let y = (ray.y/ray.x) * xEdgeDist
+					y = 0 // this is implicitly zero
+
+					const shootToColumn = new Vec(xEdgeDist, y)
+					shootToColumn.draw(ctx, this.position, 'purple', 1)
+
+					// while loop on column
+				}
+				else {
+					const yEdgeDist = stepY == 1 ? gridSize - this.position.y % gridSize : -(this.position.y % gridSize)
+					const x = (ray.x/ray.y) * yEdgeDist
+					let nextRow = new Vec(x, yEdgeDist)
+
+					const xEdgeDist = stepX == 1 ? gridSize - this.position.x % gridSize : -(this.position.x % gridSize)
+					const y = (ray.y/ray.x) * xEdgeDist
+					let nextColumn = new Vec(xEdgeDist, y)
+
+					const xCol = stepX == 1 ? gridSize : -gridSize
+					const yCol = (ray.y/ray.x) * xCol
+					const columnDelta = new Vec(xCol, yCol)
+
+					const yRow = stepY == 1 ? gridSize : -gridSize
+					const xRow = (ray.x/ray.y) * yRow
+					const rowDelta = new Vec(xRow, yRow)
+
+					//casting time
+					for (let i = 0; i < castSteps; i++) {
+						let current;
+						let color
+
+						if (nextColumn.magnitude() < nextRow.magnitude()){
+							current = nextColumn
+							color = 'purple'
+							nextColumn = nextColumn.add(columnDelta)
+						}
+						else {
+							current = nextRow
+							color = 'cyan'
+							nextRow = nextRow.add(rowDelta)
+						}
+						//check for wall innit bruv
+						if (true) {
+							current.draw(ctx, this.position, color, 1)
+							const wallPoint = current.add(this.position)
+							let col = Math.floor(wallPoint.x / gridSize)
+							if (stepX === -1 && wallPoint.x % gridSize === 0) {
+								col -= 1 
+							}
+							let row = Math.floor(wallPoint.y / gridSize)
+							if (stepY === -1 && wallPoint.y % gridSize === 0) {
+								row -= 1
+							}
+							// debugLog.innerText = `checking: ${wallPoint.x}, ${wallPoint.y} -> `
+							// debugLog.innerText += `: ${col}, ${row}\n`
+							// debugLog.innerText += `worldMapValue: ${worldMap[row][col]}\n`
+							ctx.strokeStyle = color
+							if (worldMap[row][col] > 0) {
+								ctx.fillStyle = 'rgba(255,0,0,0.2)'
+								ctx.fillRect(gridSize * col, gridSize * row, gridSize, gridSize)
+								drawPoint(current.add(this.position).x, current.add(this.position).y, color)
+								break
+							}
+							ctx.lineWidth = 2
+							ctx.strokeRect(gridSize * col, gridSize * row, gridSize, gridSize)
+						}
+					}
+				}
+			}
+		}
+	}
 }
-p1 = new Player(new Vec(215, 250))
+// const p1 = new Player(new Vec(425, 325))
+const p1 = new Player(new Vec(425, 325))
 const playerDisplay = document.getElementById('playerPos');
 playerDisplay.innerText = `pos -> {x:${p1.position.x}, y:${p1.position.y}}`
-function gameloop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'black'
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    drawMap(worldMap)
-    p1.draw(ctx)
-    p1.drawRays(ctx)
-    requestAnimationFrame(gameloop)
+const lxControl = document.getElementById('lx');
+lxControl.value = p1.lookatDir.x
+lxControl.addEventListener('input', () => {
+	const x = parseFloat(lxControl.value)
+	if (!isNaN(x)){
+		p1.lookatDir = new Vec(x, p1.lookatDir.y).unit().scale(20)
+		p1.plane = new Vec(-p1.lookatDir.y, p1.lookatDir.x).unit().scale(20) 
+	}
+})
+
+const lyControl = document.getElementById('ly');
+lyControl.value = p1.lookatDir.y
+lyControl.addEventListener('input', () => {
+	const y = parseFloat(lyControl.value)
+	if (!isNaN(y)){
+		p1.lookatDir = new Vec(p1.lookatDir.x, y).unit().scale(20)
+		p1.plane = new Vec(-p1.lookatDir.y, p1.lookatDir.y).unit().scale(20) 
+	}
+})
+
+const castStepsControl = document.getElementById('cast_steps')
+let castSteps = 1
+castStepsControl.value = castSteps
+castStepsControl.addEventListener('input', () => {
+	const steps = parseFloat(castStepsControl.value)
+	if (!isNaN(steps)){
+		castSteps = steps
+	}
+})
+
+const debugLog = document.getElementById('dlog')
+
+document.addEventListener('keydown', (e) => {
+	switch (e.key.toLowerCase()) {
+		case 'w':
+			p1.position.y -= gridSize / 10
+			break;
+
+		case 'a':
+			p1.position.x -= gridSize / 10
+			break;
+
+		case 's':
+			p1.position.y += gridSize / 10
+			break;
+			
+		case 'd':
+			p1.position.x += gridSize / 10
+			break;
+
+		default:
+			break;
+	}
+})
+function gameloop() {
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.fillStyle = 'black'
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+	drawMap(worldMap)
+
+	if (`pos -> {x:${p1.position.x}, y:${p1.position.y}}` != playerDisplay.innerText) {
+		playerDisplay.innerText = `pos -> {x:${p1.position.x}, y:${p1.position.y}}`
+	}
+	p1.draw(ctx)
+	p1.drawRays(ctx)
+	requestAnimationFrame(gameloop)
 }
 gameloop()
 function findGrid(playerPos, map, gridSize) {
-    const column = Math.floor(playerPos.x / gridSize)
-    const row = Math.floor(playerPos.y / gridSize)
-    ctx.strokeStyle = 'rgba(255,0,0,0.5)'
-    ctx.strokeRect(gridSize * column, gridSize * row, gridSize, gridSize);
+	const column = Math.floor(playerPos.x / gridSize)
+	const row = Math.floor(playerPos.y / gridSize)
+	ctx.strokeStyle = 'rgba(255,0,0,0.5)'
+	ctx.strokeRect(gridSize * column, gridSize * row, gridSize, gridSize);
 }
 
 function drawMap(map) {
-    for (let i = 0; i < map.length; i++) {
-	ctx.fillStyle = 'black'
-	for (let j = 0; j < map[i].length; j++){
-	    ctx.strokeStyle = 'white'
-	    ctx.lineWidth = 0.1 
-	    ctx.strokeRect(gridSize * j, gridSize * i, gridSize, gridSize);
-	    if (map[i][j] > 0) {
-		ctx.fillStyle = 'grey'
-		ctx.fillRect(gridSize * j, gridSize * i, gridSize, gridSize);
-	    }
+	for (let i = 0; i < map.length; i++) {
+		ctx.fillStyle = 'black'
+		for (let j = 0; j < map[i].length; j++){
+			ctx.strokeStyle = 'white'
+			ctx.lineWidth = 0.1 
+			ctx.strokeRect(gridSize * j, gridSize * i, gridSize, gridSize);
+			if (map[i][j] > 0) {
+				ctx.fillStyle = 'grey'
+				ctx.fillRect(gridSize * j, gridSize * i, gridSize, gridSize);
+			}
+		}
 	}
-    }
 }
