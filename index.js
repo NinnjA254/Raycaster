@@ -40,7 +40,7 @@ function drawFuturisticPoint(x, y) {
 
 const worldMap =
 	[
-		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		[1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
 		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
 		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
@@ -65,7 +65,7 @@ const worldMap =
 		[1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 	];
-const gridSize = 50;
+const gridSize = 20;
 canvas.width = 640;
 canvas.height = 480;
 
@@ -147,6 +147,12 @@ class Player {
 					let row = Math.floor(wallPoint.y / gridSize)
 					if (stepY === -1 && wallPoint.y % gridSize === 0) {
 						row -= 1
+					}
+					if (row < 0 || row >= worldMap.length){
+						break
+					}
+					if (col < 0 || col >= worldMap[row].length){
+						break
 					}
 					ctx.strokeStyle = color
 					if (worldMap[row][col] > 0) {
