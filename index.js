@@ -65,14 +65,20 @@ const worldMap =
 		[1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 	];
-const gridSize = 20;
+const gridSize = 50;
 canvas.width = 640;
 canvas.height = 480;
 
 class Player {
 	constructor(position) {
 		this.position = position
-		this.lookatDir = new Vec(0, -1).unit().scale(20)
+		this.lookatDir = new Vec(1, 0).unit().scale(20)
+		this.plane = new Vec(-this.lookatDir.y, this.lookatDir.x).unit().scale(20) // perpendicular to lookatDir
+	}
+	rotate(degrees) {
+		const i = new Vec(Math.cos(degrees), Math.sin(degrees))
+		const j = new Vec(-Math.sin(degrees), Math.cos(degrees)) 
+		this.lookatDir = i.scale(this.lookatDir.x).add(j.scale(this.lookatDir.y))
 		this.plane = new Vec(-this.lookatDir.y, this.lookatDir.x).unit().scale(20) // perpendicular to lookatDir
 	}
 	draw(ctx) {
@@ -173,25 +179,10 @@ const p1 = new Player(new Vec(425, 325))
 const playerDisplay = document.getElementById('playerPos');
 playerDisplay.innerText = `pos -> {x:${p1.position.x}, y:${p1.position.y}}`
 
-const lxControl = document.getElementById('lx');
-lxControl.value = p1.lookatDir.x
-lxControl.addEventListener('input', () => {
-	const x = parseFloat(lxControl.value)
-	if (!isNaN(x)){
-		p1.lookatDir = new Vec(x, p1.lookatDir.y).unit().scale(20)
-		p1.plane = new Vec(-p1.lookatDir.y, p1.lookatDir.x).unit().scale(20) 
-	}
-})
-
-const lyControl = document.getElementById('ly');
-lyControl.value = p1.lookatDir.y
-lyControl.addEventListener('input', () => {
-	const y = parseFloat(lyControl.value)
-	if (!isNaN(y)){
-		p1.lookatDir = new Vec(p1.lookatDir.x, y).unit().scale(20)
-		p1.plane = new Vec(-p1.lookatDir.y, p1.lookatDir.y).unit().scale(20) 
-	}
-})
+const rotateControl = document.getElementById('rotate');
+rotateControl.onclick = () => {
+	p1.rotate(0.1)
+}
 
 const castStepsControl = document.getElementById('cast_steps')
 let castSteps = 1
@@ -242,12 +233,6 @@ function gameloop() {
 	requestAnimationFrame(gameloop)
 }
 gameloop()
-function findGrid(playerPos, map, gridSize) {
-	const column = Math.floor(playerPos.x / gridSize)
-	const row = Math.floor(playerPos.y / gridSize)
-	ctx.strokeStyle = 'rgba(255,0,0,0.5)'
-	ctx.strokeRect(gridSize * column, gridSize * row, gridSize, gridSize);
-}
 
 function drawMap(map) {
 	for (let i = 0; i < map.length; i++) {
