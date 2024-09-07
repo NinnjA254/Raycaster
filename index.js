@@ -1,4 +1,4 @@
-canvas = document.getElementsByTagName('canvas')[0]
+const canvas = document.getElementsByTagName('canvas')[0]
 
 const ctx = canvas.getContext('2d');
 
@@ -18,24 +18,6 @@ function drawPoint(x, y, fill='rgba(0, 255, 255, 1)') {
 	ctx.fillStyle = fill;
 	ctx.lineWidth = 5;
 	ctx.fill()
-}
-function drawFuturisticPoint(x, y) {
-	// Draw the outer glow
-	const outerRadius = 2;
-	const gradient = ctx.createRadialGradient(x, y, 0, x, y, outerRadius);
-	gradient.addColorStop(0, 'rgba(0, 255, 255, 0.3)');
-	gradient.addColorStop(1, 'rgba(0, 255, 255, 0)');
-	ctx.beginPath();
-	ctx.arc(x, y, outerRadius, 0, Math.PI * 2);
-	ctx.fillStyle = gradient;
-	ctx.fill();
-
-	// Draw the main point (inner circle)
-	const innerRadius = 4;
-	ctx.beginPath();
-	ctx.arc(x, y, innerRadius, 0, Math.PI * 2);
-	ctx.fillStyle = 'cyan';
-	ctx.fill();
 }
 
 const worldMap =
@@ -65,7 +47,7 @@ const worldMap =
 		[1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 	];
-const gridSize = 50;
+const gridSize = 20;
 canvas.width = 640;
 canvas.height = 480;
 
@@ -179,9 +161,13 @@ const p1 = new Player(new Vec(425, 325))
 const playerDisplay = document.getElementById('playerPos');
 playerDisplay.innerText = `pos -> {x:${p1.position.x}, y:${p1.position.y}}`
 
-const rotateControl = document.getElementById('rotate');
-rotateControl.onclick = () => {
+const rPlusControl = document.getElementById('r+');
+rPlusControl.onclick = () => {
 	p1.rotate(0.1)
+}
+const rMinusControl = document.getElementById('r-');
+rMinusControl.onclick = () => {
+	p1.rotate(-0.1)
 }
 
 const castStepsControl = document.getElementById('cast_steps')
@@ -218,6 +204,13 @@ document.addEventListener('keydown', (e) => {
 			break;
 	}
 })
+
+canvas.addEventListener('mousemove', (e)=> {
+	debugLog.innerText = `${e.movementX}, ${e.movementY}`
+	p1.rotate(e.movementX * 0.1)
+})
+
+
 function gameloop() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.fillStyle = 'black'
