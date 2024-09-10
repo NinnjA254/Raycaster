@@ -4,7 +4,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Raycaster</title>
-		<!-- <script src='vector.js' defer></script> -->
+		<script src='vector.js' defer></script>
 		<script src='index.js' defer></script>
 		<link rel="stylesheet" href="index.css">
 
@@ -12,10 +12,13 @@
 	<body>
 		<div class='canvas-container'>
 			<canvas id='map-canvas'></canvas>
-			<canvas id='world-canvas'></canvas>
+			<canvas id='world-canvas' class='small'></canvas>
 		</div>
-		<p id="fps"></p>
-		<p id="player-pos"></p>
-		<p id="cast-steps"></p>
+		<div>
+			<p id="fps"></p>
+			<p id="player-pos"></p>
+			<p id="lookat"></p>
+			<p id="cast-steps"></p>
+		</div>
 	</body>
 </html>
