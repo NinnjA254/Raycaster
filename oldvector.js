@@ -3,25 +3,26 @@ class Vec {
 		this.x = x
 		this.y = y
 	}
-	draw (ctx, startPos, color, lineWidth=2) {
+	draw (ctx, startVec, color, lineWidth=2) {
 		ctx.strokeStyle = color;
 		ctx.lineWidth = lineWidth;
+
 		ctx.beginPath();
-		ctx.moveTo(startPos.x, startPos.y);
-		ctx.lineTo(this.x + startPos.x, this.y + startPos.y);
+
+		ctx.moveTo(startVec.x, startVec.y);
+
+		ctx.lineTo(this.x + startVec.x, this.y + startVec.y);
+
 		ctx.stroke();
 	}
 	add(vec) {
-		this.x += vec.x
-		this.y += vec.y
+		return new Vec(this.x + vec.x, this.y + vec.y)
 	}
 	sub(vec) {
-		this.x -= vec.x
-		this.y -= vec.y
+		return new Vec(this.x - vec.x, this.y - vec.y)
 	}
 	scale(scalar) {
-		this.x *= scalar
-		this.y *= scalar
+		return new Vec(this.x * scalar, this.y * scalar) 
 	}
 	magnitude() {
 		return Math.sqrt(this.x * this.x + this.y * this.y);
@@ -29,12 +30,9 @@ class Vec {
 	unit() {
 		const mag = this.magnitude()
 		if (mag == 0) { //potential bug?
-			this.x = 0
-			this.y = 0
-			return
+			return new Vec(0,0)
 		}
-		this.x /= mag
-		this.y /= mag
+		return (new Vec(this.x / mag, this.y / mag))
 	}
 }
 

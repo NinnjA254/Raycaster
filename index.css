@@ -2,22 +2,33 @@
     margin: 0;
     box-sizing: border-box;
 }
-canvas {
-}
 
 body {
-    display:flex;
+	display:flex;
+	justify-content: center;
 }
 
-.dash {
-    margin-left: 10px;
-    top: 0;
+canvas {
+	border: 1px solid red;
 }
 
-input {
-    width: 70px;
+.canvas-container {
+	position:relative;
+	width: 640px;
+	height:480px;
+	border: 2px solid;
 }
-.section-heading {
-	text-decoration: underline;
-	margin: 15px 10px 0 10px;
+
+#map-canvas {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+}
+
+#world-canvas {
+	position: absolute;
+}
+
+p {
+	font-size: 40px;
 }
