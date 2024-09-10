@@ -76,7 +76,7 @@ class Player {
 		fovBorderLeft.draw(ctx, this.position, 'green')
 	}
 	drawRays(ctx) {
-		const rayNum = 10
+		const rayNum =  10
 		for (let i = -rayNum; i <= rayNum; i++) {
 			if (true) { //todo: remove this if, tis simply for debugging
 				const ray = this.lookatDir.add(this.plane.scale(i/rayNum)).unit()
@@ -206,12 +206,16 @@ document.addEventListener('keydown', (e) => {
 })
 
 canvas.addEventListener('mousemove', (e)=> {
-	debugLog.innerText = `${e.movementX}, ${e.movementY}`
+	// debugLog.innerText = `${e.movementX}, ${e.movementY}`
 	p1.rotate(e.movementX * 0.1)
 })
 
 
-function gameloop() {
+let prevTime = 0
+function gameloop(timeStamp) {
+	debugLog.innerText = 'fps: ' + Math.floor(1000 / (timeStamp - prevTime))
+	prevTime = timeStamp
+
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.fillStyle = 'black'
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
