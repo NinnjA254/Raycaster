@@ -8,12 +8,12 @@ class Vec {
 		this.y = y
 		return this
 	}
-	draw (ctx, startX, startY, color, lineWidth=2) {
+	draw (ctx, startX, startY, color, scale=1, lineWidth=2) {
 		ctx.strokeStyle = color;
 		ctx.lineWidth = lineWidth;
 		ctx.beginPath();
 		ctx.moveTo(startX, startY);
-		ctx.lineTo(this.x + startX, this.y + startY);
+		ctx.lineTo(this.x * scale + startX, this.y * scale + startY);
 		ctx.stroke();
 	}
 	add(vec) {
