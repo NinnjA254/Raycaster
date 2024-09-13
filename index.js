@@ -11,30 +11,30 @@ const mapCtx = mapCanvas.getContext('2d')
 
 const worldMap =
 	[
-		[1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1],
-		[1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1],
-		[1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+		['red','red',null,'red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red'],
+		['red',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,null,null,null,'blue',null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,'green','green','green','green','green',null,null,null,null,'blue',null,'blue',null,'blue',null,null,null,'red'],
+		['red',null,null,null,null,null,'green',null,null,null,'green',null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,'green',null,null,null,'green',null,null,null,null,'blue',null,null,null,'blue',null,null,null,'red'],
+		['red',null,null,null,null,null,'green',null,null,null,'green',null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,'green','green',null,'green','green',null,null,null,null,'blue',null,'blue',null,'blue',null,null,null,'red'],
+		['red',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,null,'brown',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red','yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow',null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red','yellow',null,'yellow',null,null,null,null,'yellow',null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red','yellow',null,null,null,null,'magenta',null,'yellow',null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red','yellow',null,'yellow',null,null,null,null,'yellow',null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red','yellow',null,'yellow','yellow','yellow','yellow','yellow','yellow',null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red','yellow',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red','yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow',null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red']
 	];
 let gridSize = mapCanvas.width / worldMap.length 
 // gridSize = 40
@@ -46,7 +46,7 @@ class Player {
 	constructor(position) {
 		this.position = position
 		this.lookatDir = new Vec(1, 0) //always unit vector
-		this.fov = 90 
+		this.fov = 60 
 		let planeLength = Math.tan(deg2Rad(this.fov / 2)) * this.lookatDir.magnitude()
 		planeLength = 1
 		this.planeRight = new Vec(-this.lookatDir.y, this.lookatDir.x).scale(planeLength) // perpendicular to lookatDir
@@ -111,7 +111,9 @@ class Player {
 		const current = new Vec(0, 0)
 		for (let x = 0; x <= width; x++) {
 			const cameraX = (x / width) * 2 - 1 
-			ray.copy(this.planeRight).scale(cameraX).add(this.lookatDir).unit()
+			ray.copy(this.planeRight).scale(cameraX).add(this.lookatDir)
+			const rPlane = ray.magnitude()
+			ray.unit()
 			// ray.draw(mCtx, this.position.x, this.position.y, 'rgba(255,255,0,0.1)', 300, 1)
 			let stepX = ray.x == 0 ? 0 : ray.x / Math.abs(ray.x) // 0, -1 or 1
 			let stepY = ray.y == 0 ? 0 : ray.y / Math.abs(ray.y) // 0, -1 or 1
@@ -138,6 +140,8 @@ class Player {
 			let color;
 			let collision = false;
 			castSteps = Infinity
+			let col
+			let row
 			for(let j = 0; j < castSteps; j++) {
 				if (nextColumn.magnitude() < nextRow.magnitude()) {
 					color = 'rgba(128, 0, 128, 0.1)'
@@ -158,8 +162,8 @@ class Player {
 
 				const wallX = this.position.x + current.x
 				const wallY = this.position.y + current.y
-				let col = Math.floor(wallX / gridSize)
-				let row = Math.floor(wallY / gridSize)
+				col = Math.floor(wallX / gridSize)
+				row = Math.floor(wallY / gridSize)
 				if (stepX === -1 && wallX % gridSize === 0) { //compress to ternary
 					col -= 1 
 				}
@@ -173,28 +177,31 @@ class Player {
 				if (col < 0 || col >= worldMap[row].length){
 					break
 				}
-				if (worldMap[row][col] > 0) {
+				if (worldMap[row][col]) {
 					collision = true
-					mCtx.fillStyle = 'rgba(255,0,0,0.2)'
-					mCtx.fillRect(gridSize * col, gridSize * row, gridSize, gridSize)
-					// drawPoint(mCtx, wallX, wallY, color)
 					break
 				}
-				mCtx.strokeStyle = color
-				mCtx.lineWidth = 2
-				mCtx.strokeRect(gridSize * col, gridSize * row, gridSize, gridSize)
+				// mCtx.strokeStyle = color
+				// mCtx.lineWidth = 2
+				// mCtx.strokeRect(gridSize * col, gridSize * row, gridSize, gridSize)
 			}
+			// current.draw(mCtx, this.position.x, this.position.y, color, 1, 1)
 			current.draw(mCtx, this.position.x, this.position.y, color, 1, 1)
 			if (collision) {
 				// drawing map
-				const aHeight = 64
-				const dPlane = 255
-
-				const pHeight = aHeight / current.magnitude() * dPlane
+				// mCtx.fillStyle = color
+				// mCtx.fillRect(gridSize * col, gridSize * row, gridSize, gridSize)
 				
 				// drawing world 
-				const floor = 390
-				drawLine(wCtx, x, floor , x, floor - pHeight , color.replace(/0\.1/g, '1'))
+				const actualWallHeight = 64 // I don't completely get this mazematik
+				const dPlane = 355
+
+				const dWall = current.magnitude()
+				const perpWall = dWall / rPlane
+
+				const projectedHeight = Math.floor((actualWallHeight / perpWall) * dPlane)
+				const playerHeight = 240 // half the screen, so that their line of sight is at center of screen??
+				drawLine(wCtx, x, playerHeight + projectedHeight / 2 , x, playerHeight - projectedHeight / 2 , worldMap[row][col])
 			}
 		}
 	}
@@ -315,8 +322,8 @@ function drawMap(map, ctx) {
 			ctx.strokeStyle = 'white'
 			ctx.lineWidth = 0.1 
 			ctx.strokeRect(gridSize * j, gridSize * i, gridSize, gridSize);
-			if (map[i][j] > 0) {
-				ctx.fillStyle = 'grey'
+			if (map[i][j]) {
+				ctx.fillStyle = map[i][j] 
 				ctx.fillRect(gridSize * j, gridSize * i, gridSize, gridSize);
 			}
 		}
