@@ -193,11 +193,12 @@ class Player {
 				// mCtx.fillRect(gridSize * col, gridSize * row, gridSize, gridSize)
 				
 				// drawing world 
-				const actualWallHeight = 64 // I don't completely get this mazematik
-				const dPlane = 355
-
 				const dWall = current.magnitude()
-				const perpWall = dWall / rPlane
+				const perpWall = (dWall / rPlane) * this.lookatDir.magnitude() //perpendicular wall distance correcting for fisheye effect
+
+				const actualWallHeight = 64 // I don't completely get this mazematik
+				const dPlane = 355 // distance from player to projection plane
+
 
 				const projectedHeight = Math.floor((actualWallHeight / perpWall) * dPlane)
 				const playerHeight = 240 // half the screen, so that their line of sight is at center of screen??
