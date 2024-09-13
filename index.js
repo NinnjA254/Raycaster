@@ -37,7 +37,7 @@ const worldMap =
 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 	];
 let gridSize = mapCanvas.width / worldMap.length 
-gridSize = 40
+// gridSize = 40
 
 function deg2Rad(degrees) {
 	return degrees * (Math.PI / 180)
@@ -104,11 +104,98 @@ class Player {
 		const mCtx = mCanvas.getContext('2d')
 		const width = wCanvas.width
 		const ray = this.ray
+		const nextColumn = new Vec(Infinity, Infinity)
+		const nextRow = new Vec(Infinity, Infinity)
+		const rowDelta = new Vec(Infinity, Infinity)
+		const columnDelta = new Vec(Infinity, Infinity)
+		const current = new Vec(0, 0)
 		for (let x = 0; x <= width; x++) {
 			const cameraX = (x / width) * 2 - 1 
-			ray.copy(this.planeRight).scale(cameraX).add(this.lookatDir)
-			ray.draw(mCtx, this.position.x, this.position.y, 'rgba(255,255,0,0.1)', 300, 1)
-			drawLine(wCtx, x, 40, x, 70, 'yellow')
+			ray.copy(this.planeRight).scale(cameraX).add(this.lookatDir).unit()
+			// ray.draw(mCtx, this.position.x, this.position.y, 'rgba(255,255,0,0.1)', 300, 1)
+			let stepX = ray.x == 0 ? 0 : ray.x / Math.abs(ray.x) // 0, -1 or 1
+			let stepY = ray.y == 0 ? 0 : ray.y / Math.abs(ray.y) // 0, -1 or 1
+
+			if (stepX != 0) {
+				const initialColX = stepX == 1 ? gridSize - this.position.x % gridSize : -(this.position.x % gridSize)
+				const initialColY = (ray.y/ray.x) * initialColX
+				nextColumn.set(initialColX, initialColY)
+
+				const colX = stepX == 1 ? gridSize : -gridSize
+				const colY = (ray.y/ray.x) * colX
+				columnDelta.set(colX, colY)
+			}
+			if (stepY != 0) {
+				const initialRowY = stepY == 1 ? gridSize - this.position.y % gridSize : -(this.position.y % gridSize)
+				const initialRowX = (ray.x/ray.y) * initialRowY
+				nextRow.set(initialRowX, initialRowY)
+
+				const rowY = stepY == 1 ? gridSize : -gridSize
+				const rowX = (ray.x/ray.y) * rowY
+				rowDelta.set(rowX, rowY)
+			}
+
+			let color;
+			let collision = false;
+			castSteps = Infinity
+			for(let j = 0; j < castSteps; j++) {
+				if (nextColumn.magnitude() < nextRow.magnitude()) {
+					color = 'rgba(128, 0, 128, 0.1)'
+					current.copy(nextColumn)
+					nextColumn.add(columnDelta)
+				}
+				else if (nextRow.magnitude() < nextColumn.magnitude()) {
+					color = 'rgba(0, 255, 255, 0.1)'
+					current.copy(nextRow)
+					nextRow.add(rowDelta)
+				}
+				else {
+					color = 'rgba(75, 0, 255, 0.1)'
+					current.copy(nextRow) // test picking different
+					nextColumn.add(columnDelta) // increment both since they are at the same place
+					nextRow.add(rowDelta)
+				}
+
+				const wallX = this.position.x + current.x
+				const wallY = this.position.y + current.y
+				let col = Math.floor(wallX / gridSize)
+				let row = Math.floor(wallY / gridSize)
+				if (stepX === -1 && wallX % gridSize === 0) { //compress to ternary
+					col -= 1 
+				}
+				if (stepY === -1 && wallY % gridSize === 0) {
+					row -= 1
+				}
+
+				if (row < 0 || row >= worldMap.length){ //compress to one if
+					break
+				}
+				if (col < 0 || col >= worldMap[row].length){
+					break
+				}
+				if (worldMap[row][col] > 0) {
+					collision = true
+					mCtx.fillStyle = 'rgba(255,0,0,0.2)'
+					mCtx.fillRect(gridSize * col, gridSize * row, gridSize, gridSize)
+					// drawPoint(mCtx, wallX, wallY, color)
+					break
+				}
+				mCtx.strokeStyle = color
+				mCtx.lineWidth = 2
+				mCtx.strokeRect(gridSize * col, gridSize * row, gridSize, gridSize)
+			}
+			current.draw(mCtx, this.position.x, this.position.y, color, 1, 1)
+			if (collision) {
+				// drawing map
+				const aHeight = 64
+				const dPlane = 255
+
+				const pHeight = aHeight / current.magnitude() * dPlane
+				
+				// drawing world 
+				const floor = 390
+				drawLine(wCtx, x, floor , x, floor - pHeight , color.replace(/0\.1/g, '1'))
+			}
 		}
 	}
 }
@@ -148,6 +235,14 @@ document.addEventListener('keydown', (e) => {
 		case 'd':
 			p1.position.x += gridSize / 5
 			break;
+		case 'arrowup':
+			castSteps++
+			cSteps.value = castSteps
+			break;
+		case 'arrowdown':
+			castSteps--
+			cSteps.value = castSteps
+			break;
 
 		default:
 			break;
@@ -167,6 +262,16 @@ const wheel = (e) => {
 }
 worldCanvas.onwheel = wheel
 mapCanvas.onwheel = wheel
+
+const cSteps = document.getElementById('cast-steps')
+let castSteps = 1
+cSteps.value = castSteps
+cSteps.addEventListener('input', () => {
+	const steps = parseFloat(cSteps.value)
+	if (!isNaN(steps)){
+		castSteps = steps
+	}
+})
 
 const playerPosDisplay = document.getElementById('player-pos')
 const lookatDisplay = document.getElementById('lookat')
