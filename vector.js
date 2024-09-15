@@ -3,36 +3,55 @@ class Vec {
 		this.x = x
 		this.y = y
 	}
-	draw (ctx, startVec, color, lineWidth=2) {
+	set(x, y) {
+		this.x = x
+		this.y = y
+		return this
+	}
+	draw (ctx, startX, startY, color, scale=1, lineWidth=2) {
 		ctx.strokeStyle = color;
 		ctx.lineWidth = lineWidth;
-
 		ctx.beginPath();
-
-		ctx.moveTo(startVec.x, startVec.y);
-
-		ctx.lineTo(this.x + startVec.x, this.y + startVec.y);
-
+		ctx.moveTo(startX, startY);
+		ctx.lineTo(this.x * scale + startX, this.y * scale + startY);
 		ctx.stroke();
 	}
 	add(vec) {
-		return new Vec(this.x + vec.x, this.y + vec.y)
+		this.x += vec.x
+		this.y += vec.y
+		return this
 	}
 	sub(vec) {
-		return new Vec(this.x - vec.x, this.y - vec.y)
+		this.x -= vec.x
+		this.y -= vec.y
+		return this
 	}
 	scale(scalar) {
-		return new Vec(this.x * scalar, this.y * scalar) 
+		this.x *= scalar
+		this.y *= scalar
+		return this
 	}
 	magnitude() {
 		return Math.sqrt(this.x * this.x + this.y * this.y);
 	}
 	unit() {
 		const mag = this.magnitude()
-		if (mag == 0) { //potential bug?
-			return new Vec(0,0)
+		if (mag == 0) {
+			this.x = 0
+			this.y = 0
+			return this
 		}
-		return (new Vec(this.x / mag, this.y / mag))
+		this.x /= mag
+		this.y /= mag
+		return this
+	}
+	clone() {
+		return new Vec(this.x, this.y)
+	}
+	copy(vec) {
+		this.x = vec.x
+		this.y = vec.y
+		return this
 	}
 }
 

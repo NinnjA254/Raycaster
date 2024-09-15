@@ -10,18 +10,16 @@
 
 	</head>
 	<body>
-		<canvas></canvas>
-		<div class="dash">
-			<p id="playerPos">playerpos</p>
-			<button type="" id='r+'>rotate+10</button>
-			<button type="" id='r-'>rotate-10</button>
-			<div>
-				cast steps: <input type="number" name="" value="1" id="cast_steps"/>
-			</div>
-			<div>
-				<p class='section-heading'>debug log:</p>
-				<p id='dlog'></p>
-			</div>
+		<div class='canvas-container'>
+			<canvas id='map-canvas'></canvas>
+			<canvas id='world-canvas' class='small'></canvas>
+		</div>
+		<div>
+			<p id="fps"></p>
+			<p id="player-pos"></p>
+			<p id="lookat"></p>
+			<input id="cast-steps" type='number'/>
+			<p id="fov"></p>
 		</div>
 	</body>
 </html>

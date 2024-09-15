@@ -1,203 +1,258 @@
-const canvas = document.getElementsByTagName('canvas')[0]
+const worldCanvas = document.getElementById('world-canvas')
+const mapCanvas = document.getElementById('map-canvas')
 
-const ctx = canvas.getContext('2d');
+worldCanvas.width = 640
+worldCanvas.height = 480
+mapCanvas.width = 480 
+mapCanvas.height = 480 
 
-// Resize the canvas to fill the window
-// function resizeCanvas() {
-//     canvas.width =  window.innerWidth
-//     canvas.height = window.innerHeight;
-// }
-// resizeCanvas();
-// window.addEventListener('resize', resizeCanvas);
-
-
-function drawPoint(x, y, fill='rgba(0, 255, 255, 1)') {
-	ctx.beginPath()
-	ctx.arc(x, y, 5, 0, Math.PI * 2, true);
-	ctx.strokeStyle = 'blue';
-	ctx.fillStyle = fill;
-	ctx.lineWidth = 5;
-	ctx.fill()
-}
+const worldCtx = worldCanvas.getContext('2d')
+const mapCtx = mapCanvas.getContext('2d')
 
 const worldMap =
 	[
-		[1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1],
-		[1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1],
-		[1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+		['red','red',null,'red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red'],
+		['red',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,null,null,null,'blue',null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,'green','green','green','green','green',null,null,null,null,'blue',null,'blue',null,'blue',null,null,null,'red'],
+		['red',null,null,null,null,null,'green',null,null,null,'green',null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,'green',null,null,null,'green',null,null,null,null,'blue',null,null,null,'blue',null,null,null,'red'],
+		['red',null,null,null,null,null,'green',null,null,null,'green',null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,'green','green',null,'green','green',null,null,null,null,'blue',null,'blue',null,'blue',null,null,null,'red'],
+		['red',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,null,'brown',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red','yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow',null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red','yellow',null,'yellow',null,null,null,null,'yellow',null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red','yellow',null,null,null,null,'magenta',null,'yellow',null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red','yellow',null,'yellow',null,null,null,null,'yellow',null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red','yellow',null,'yellow','yellow','yellow','yellow','yellow','yellow',null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red','yellow',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red','yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow',null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
+		['red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red']
 	];
-const gridSize = 20;
-canvas.width = 640;
-canvas.height = 480;
+let gridSize = mapCanvas.width / worldMap.length 
+// gridSize = 40
 
+function deg2Rad(degrees) {
+	return degrees * (Math.PI / 180)
+}
 class Player {
 	constructor(position) {
 		this.position = position
-		this.lookatDir = new Vec(1, 0).unit().scale(20)
-		this.plane = new Vec(-this.lookatDir.y, this.lookatDir.x).unit().scale(20) // perpendicular to lookatDir
+		this.lookatDir = new Vec(1, 0) //always unit vector
+		this.fov = 60 
+		let planeLength = Math.tan(deg2Rad(this.fov / 2)) * this.lookatDir.magnitude()
+		planeLength = 1
+		this.planeRight = new Vec(-this.lookatDir.y, this.lookatDir.x).scale(planeLength) // perpendicular to lookatDir
+		this.planeLeft = this.planeRight.clone().scale(-1)
+
+		this.fovBorderLeft = this.lookatDir.clone().add(this.planeLeft)
+		this.fovBorderRight = this.lookatDir.clone().add(this.planeRight)
 	}
+
+	changeFov(degrees) {
+		this.fov = degrees 
+		const planeLength = Math.tan(deg2Rad(this.fov / 2)) * this.lookatDir.magnitude()
+		this.planeRight = new Vec(-this.lookatDir.y, this.lookatDir.x).scale(planeLength) // perpendicular to lookatDir
+		this.planeLeft = this.planeRight.clone().scale(-1)
+
+		this.fovBorderLeft.copy(this.lookatDir).add(this.planeLeft)
+		this.fovBorderRight.copy(this.lookatDir).add(this.planeRight)
+	}
+
 	rotate(degrees) {
-		const i = new Vec(Math.cos(degrees), Math.sin(degrees))
-		const j = new Vec(-Math.sin(degrees), Math.cos(degrees)) 
-		this.lookatDir = i.scale(this.lookatDir.x).add(j.scale(this.lookatDir.y))
-		this.plane = new Vec(-this.lookatDir.y, this.lookatDir.x).unit().scale(20) // perpendicular to lookatDir
+		const ix = Math.cos(degrees)
+		const iy = Math.sin(degrees)
+		const jx = -Math.sin(degrees)
+		const jy = Math.cos(degrees)
+		const newX = this.lookatDir.x * ix + this.lookatDir.y * jx
+		const newY = this.lookatDir.x * iy + this.lookatDir.y * jy
+		this.lookatDir.set(newX, newY)
+
+		const planeLength = Math.tan(deg2Rad(this.fov / 2))
+		this.planeRight.set(-this.lookatDir.y, this.lookatDir.x).scale(planeLength)
+		this.planeLeft.copy(this.planeRight).scale(-1)
+
+		this.fovBorderLeft.copy(this.lookatDir).add(this.planeLeft)
+		this.fovBorderRight.copy(this.lookatDir).add(this.planeRight)
 	}
 	draw(ctx) {
-		drawPoint(this.position.x, this.position.y)
-		this.position.draw(ctx, origin, 'blue')
-		this.lookatDir.draw(ctx, this.position, 'red')
-		this.plane.draw(ctx, this.position.add(this.lookatDir), 'green')
-		this.plane.scale(-1).draw(ctx, this.position.add(this.lookatDir), 'green')
+		const scale = 10 //scale of the drawn fov triangle
 
-		const fovBorderLeft = this.lookatDir.add(this.plane).unit().scale(180)
-		const fovBorderRight = this.lookatDir.add(this.plane.scale(-1)).unit().scale(180)
-		fovBorderRight.draw(ctx, this.position, 'green')
-		fovBorderLeft.draw(ctx, this.position, 'green')
+		drawPoint(ctx, this.position.x, this.position.y)
+		// this.position.draw(ctx, 0, 0, 'blue')
+		this.lookatDir.draw(ctx, this.position.x, this.position.y, 'red', scale)
+
+		const planeStartX = this.position.x + this.lookatDir.x * scale 
+		const planeStartY = this.position.y + this.lookatDir.y * scale
+		this.planeRight.draw(ctx, planeStartX, planeStartY, 'green', scale)
+		this.planeLeft.draw(ctx, planeStartX, planeStartY, 'green', scale)
+
+		this.fovBorderRight.draw(ctx, this.position.x, this.position.y, 'green', scale * 2)
+		this.fovBorderLeft.draw(ctx, this.position.x, this.position.y, 'green', scale * 2)
 	}
-	drawRays(ctx) {
-		const rayNum =  10
-		for (let i = -rayNum; i <= rayNum; i++) {
-			if (true) { //todo: remove this if, tis simply for debugging
-				const ray = this.lookatDir.add(this.plane.scale(i/rayNum)).unit()
-				// ray.draw(ctx, this.position, 'rgba(255,255,0,0.7)', 1)
+	see(wCanvas, mCanvas) {
+		const wCtx = wCanvas.getContext('2d')
+		const mCtx = mCanvas.getContext('2d')
+		const width = wCanvas.width
+		const ray = new Vec(0, 0)
+		const nextColumn = new Vec(Infinity, Infinity)
+		const nextRow = new Vec(Infinity, Infinity)
+		const rowDelta = new Vec(Infinity, Infinity)
+		const columnDelta = new Vec(Infinity, Infinity)
+		const current = new Vec(0, 0)
+		for (let x = 0; x <= width; x++) {
+			const cameraX = (x / width) * 2 - 1 
+			ray.copy(this.planeRight).scale(cameraX).add(this.lookatDir)
+			const rPlane = ray.magnitude() // ray's distance to plane
+			ray.unit()
+			let stepX = ray.x == 0 ? 0 : ray.x / Math.abs(ray.x) // 0, -1 or 1
+			let stepY = ray.y == 0 ? 0 : ray.y / Math.abs(ray.y) // 0, -1 or 1
 
-				let stepX = ray.x == 0 ? 0 : ray.x / Math.abs(ray.x) // 0, -1 or 1
-				let stepY = ray.y == 0 ? 0 : ray.y / Math.abs(ray.y) // 0, -1 or 1
-				// In a language that doesn't support division by zero,
-				// add checks for when stepX or stepY are 0, ie, when stepX is 0. 👇 
-				// if (stepX == 0) {
-				// 	nextColumn == (Infinity, Infinity)
-				// 	columnDelta == (Infinity,Infinity)
-				// }
-				// else {
-				// 	calculate nextColumn and columnDelta 
-				// }
+			if (stepX != 0) {
+				const initialColX = stepX == 1 ? gridSize - this.position.x % gridSize : -(this.position.x % gridSize)
+				const initialColY = (ray.y/ray.x) * initialColX
+				nextColumn.set(initialColX, initialColY)
 
-				const yEdgeDist = stepY == 1 ? gridSize - this.position.y % gridSize : -(this.position.y % gridSize)
-				const x = (ray.x/ray.y) * yEdgeDist
-				let nextRow = new Vec(x, yEdgeDist)
+				const colX = stepX == 1 ? gridSize : -gridSize
+				const colY = (ray.y/ray.x) * colX
+				columnDelta.set(colX, colY)
+			}
+			if (stepY != 0) {
+				const initialRowY = stepY == 1 ? gridSize - this.position.y % gridSize : -(this.position.y % gridSize)
+				const initialRowX = (ray.x/ray.y) * initialRowY
+				nextRow.set(initialRowX, initialRowY)
 
-				const yRow = stepY == 1 ? gridSize : -gridSize
-				const xRow = (ray.x/ray.y) * yRow
-				const rowDelta = new Vec(xRow, yRow)
+				const rowY = stepY == 1 ? gridSize : -gridSize
+				const rowX = (ray.x/ray.y) * rowY
+				rowDelta.set(rowX, rowY)
+			}
 
-				const xEdgeDist = stepX == 1 ? gridSize - this.position.x % gridSize : -(this.position.x % gridSize)
-				const y = (ray.y/ray.x) * xEdgeDist
-				let nextColumn = new Vec(xEdgeDist, y)
-
-				const xCol = stepX == 1 ? gridSize : -gridSize
-				const yCol = (ray.y/ray.x) * xCol
-				const columnDelta = new Vec(xCol, yCol)
-
-				//casting time
-				for (let i = 0; i < castSteps; i++) {
-					let current;
-					let color
-
-					if (nextColumn.magnitude() < nextRow.magnitude()){
-						current = nextColumn
-						color = 'purple'
-						nextColumn = nextColumn.add(columnDelta)
-					}
-					else {
-						current = nextRow
-						color = 'cyan'
-						nextRow = nextRow.add(rowDelta)
-					}
-					//check for wall innit bruv
-					current.draw(ctx, this.position, color, 1)
-					const wallPoint = current.add(this.position)
-					let col = Math.floor(wallPoint.x / gridSize)
-					if (stepX === -1 && wallPoint.x % gridSize === 0) {
-						col -= 1 
-					}
-					let row = Math.floor(wallPoint.y / gridSize)
-					if (stepY === -1 && wallPoint.y % gridSize === 0) {
-						row -= 1
-					}
-					if (row < 0 || row >= worldMap.length){
-						break
-					}
-					if (col < 0 || col >= worldMap[row].length){
-						break
-					}
-					ctx.strokeStyle = color
-					if (worldMap[row][col] > 0) {
-						ctx.fillStyle = 'rgba(255,0,0,0.2)'
-						ctx.fillRect(gridSize * col, gridSize * row, gridSize, gridSize)
-						drawPoint(current.add(this.position).x, current.add(this.position).y, color)
-						break
-					}
-					ctx.lineWidth = 2
-					ctx.strokeRect(gridSize * col, gridSize * row, gridSize, gridSize)
+			let color;
+			let collision = false;
+			castSteps = Infinity
+			let col
+			let row
+			for(let j = 0; j < castSteps; j++) {
+				if (nextColumn.magnitude() < nextRow.magnitude()) {
+					color = 'rgba(128, 0, 128, 0.1)'
+					current.copy(nextColumn)
+					nextColumn.add(columnDelta)
 				}
+				else if (nextRow.magnitude() < nextColumn.magnitude()) {
+					color = 'rgba(0, 255, 255, 0.1)'
+					current.copy(nextRow)
+					nextRow.add(rowDelta)
+				}
+				else {
+					color = 'rgba(75, 0, 255, 0.1)'
+					current.copy(nextRow) // test picking different
+					nextColumn.add(columnDelta) // increment both since they are at the same place
+					nextRow.add(rowDelta)
+				}
+
+				const wallX = this.position.x + current.x
+				const wallY = this.position.y + current.y
+				col = Math.floor(wallX / gridSize)
+				row = Math.floor(wallY / gridSize)
+				if (stepX === -1 && wallX % gridSize === 0) { //compress to ternary
+					col -= 1 
+				}
+				if (stepY === -1 && wallY % gridSize === 0) {
+					row -= 1
+				}
+
+				if (row < 0 || row >= worldMap.length){ //compress to one if
+					break
+				}
+				if (col < 0 || col >= worldMap[row].length){
+					break
+				}
+				if (worldMap[row][col]) {
+					collision = true
+					break
+				}
+				// mCtx.strokeStyle = color
+				// mCtx.lineWidth = 2
+				// mCtx.strokeRect(gridSize * col, gridSize * row, gridSize, gridSize)
+			}
+			// current.draw(mCtx, this.position.x, this.position.y, color, 1, 1)
+			current.draw(mCtx, this.position.x, this.position.y, color, 1, 1)
+			if (collision) {
+				// drawing map
+				// mCtx.fillStyle = color
+				// mCtx.fillRect(gridSize * col, gridSize * row, gridSize, gridSize)
+				
+				// drawing world 
+				const dWall = current.magnitude()
+				const perpWall = (dWall / rPlane) * this.lookatDir.magnitude() //perpendicular wall distance correcting for fisheye effect
+
+				const actualWallHeight = 64 // I don't completely get this mazematik
+				const dPlane = 355 // distance from player to projection plane
+
+				const projectedHeight = Math.floor((actualWallHeight / perpWall) * dPlane)
+				const playerHeight = 240 // half the screen, so that their line of sight is at center of screen
+				drawLine(wCtx, x, playerHeight + projectedHeight / 2 , x, playerHeight - projectedHeight / 2 , worldMap[row][col])
 			}
 		}
 	}
 }
-// const p1 = new Player(new Vec(425, 325))
-const p1 = new Player(new Vec(425, 325))
-const playerDisplay = document.getElementById('playerPos');
-playerDisplay.innerText = `pos -> {x:${p1.position.x}, y:${p1.position.y}}`
 
-const rPlusControl = document.getElementById('r+');
-rPlusControl.onclick = () => {
-	p1.rotate(0.1)
-}
-const rMinusControl = document.getElementById('r-');
-rMinusControl.onclick = () => {
-	p1.rotate(-0.1)
+function drawLine(ctx, startX, startY, endX, endY, color) {
+	ctx.strokeStyle = color;
+	ctx.lineWidth = 1;
+	ctx.beginPath();
+	ctx.moveTo(startX, startY);
+	ctx.lineTo(endX, endY);
+	ctx.stroke();
 }
 
-const castStepsControl = document.getElementById('cast_steps')
-let castSteps = 1
-castStepsControl.value = castSteps
-castStepsControl.addEventListener('input', () => {
-	const steps = parseFloat(castStepsControl.value)
-	if (!isNaN(steps)){
-		castSteps = steps
-	}
-})
-
-const debugLog = document.getElementById('dlog')
+const p1 = new Player(new Vec(240, 240))
 
 document.addEventListener('keydown', (e) => {
 	switch (e.key.toLowerCase()) {
-		case 'w':
-			p1.position.y -= gridSize / 10
+		case 'q':
+			mapCanvas.classList.toggle('small')
+			worldCanvas.classList.toggle('small')
 			break;
 
-		case 'a':
-			p1.position.x -= gridSize / 10
+		case 'w': {
+			const step = gridSize / 5
+			p1.position.set(p1.position.x + p1.lookatDir.x * step, p1.position.y + p1.lookatDir.y * step)
 			break;
+		}
 
-		case 's':
-			p1.position.y += gridSize / 10
+		case 'a': {
+			const step = gridSize / 5
+			p1.position.set(p1.position.x + p1.lookatDir.y * step, p1.position.y - p1.lookatDir.x * step)
 			break;
+		}
 
-		case 'd':
-			p1.position.x += gridSize / 10
+		case 's': {
+			const step = gridSize / 5
+			p1.position.set(p1.position.x - p1.lookatDir.x * step, p1.position.y - p1.lookatDir.y * step)
+			break;
+		}
+
+		case 'd': {
+			const step = gridSize / 5
+			p1.position.set(p1.position.x - p1.lookatDir.y * step, p1.position.y + p1.lookatDir.x * step)
+			break;
+		}
+
+		case 'arrowup':
+			castSteps++
+			cSteps.value = castSteps
+			break;
+		case 'arrowdown':
+			castSteps--
+			cSteps.value = castSteps
 			break;
 
 		default:
@@ -205,43 +260,83 @@ document.addEventListener('keydown', (e) => {
 	}
 })
 
-canvas.addEventListener('mousemove', (e)=> {
-	// debugLog.innerText = `${e.movementX}, ${e.movementY}`
-	p1.rotate(e.movementX * 0.1)
+const mousemove = (e)=> {
+	p1.rotate(e.movementX * 0.01)
+}
+mapCanvas.onmousemove = mousemove
+worldCanvas.onmousemove = mousemove
+
+const wheel = (e) => {
+	p1.changeFov(p1.fov + e.deltaY/10)
+}
+worldCanvas.onwheel = wheel
+mapCanvas.onwheel = wheel
+
+const cSteps = document.getElementById('cast-steps')
+let castSteps = 1
+cSteps.value = castSteps
+cSteps.addEventListener('input', () => {
+	const steps = parseFloat(cSteps.value)
+	if (!isNaN(steps)){
+		castSteps = steps
+	}
 })
 
+const playerPosDisplay = document.getElementById('player-pos')
+const lookatDisplay = document.getElementById('lookat')
+const fpsDisplay = document.getElementById('fps')
+const fovDisplay = document.getElementById('fov')
 
+let fps = 0
 let prevTime = 0
-function gameloop(timeStamp) {
-	debugLog.innerText = 'fps: ' + Math.floor(1000 / (timeStamp - prevTime))
-	prevTime = timeStamp
+function gameLoop(timestamp) {
+	fps = 1000 / (timestamp - prevTime) // do we care about this precision?
+	fps = fps.toFixed(2)
+	fpsDisplay.innerText = `fps: ${fps}`
+	prevTime = timestamp
 
+	clearCanvas(mapCanvas, mapCtx)
+	clearCanvas(worldCanvas, worldCtx)
+
+	drawMap(worldMap, mapCtx)
+	p1.draw(mapCtx)
+
+	p1.see(worldCanvas, mapCanvas)
+
+	const playerX = p1.position.x.toFixed(2)
+	const playerY = p1.position.y.toFixed(2)
+	playerPosDisplay.innerText = `Pos: ${playerX}, ${playerY}`
+	lookatDisplay.innerText = `lookat: ${p1.lookatDir.x.toFixed(2)}, ${p1.lookatDir.y.toFixed(2)}`
+	fovDisplay.innerText = `fov: ${p1.fov}`
+
+	requestAnimationFrame(gameLoop)
+}
+gameLoop()
+
+function clearCanvas(canvas, ctx) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.fillStyle = 'black'
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-	drawMap(worldMap)
-
-	if (`pos -> {x:${p1.position.x}, y:${p1.position.y}}` != playerDisplay.innerText) {
-		playerDisplay.innerText = `pos -> {x:${p1.position.x}, y:${p1.position.y}}`
-	}
-	p1.draw(ctx)
-	p1.drawRays(ctx)
-	requestAnimationFrame(gameloop)
 }
-gameloop()
 
-function drawMap(map) {
+function drawMap(map, ctx) {
 	for (let i = 0; i < map.length; i++) {
 		ctx.fillStyle = 'black'
 		for (let j = 0; j < map[i].length; j++){
 			ctx.strokeStyle = 'white'
 			ctx.lineWidth = 0.1 
 			ctx.strokeRect(gridSize * j, gridSize * i, gridSize, gridSize);
-			if (map[i][j] > 0) {
-				ctx.fillStyle = 'grey'
+			if (map[i][j]) {
+				ctx.fillStyle = map[i][j] 
 				ctx.fillRect(gridSize * j, gridSize * i, gridSize, gridSize);
 			}
 		}
 	}
+}
+
+function drawPoint(ctx, x, y, fill='rgba(0, 255, 255, 1)') {
+	ctx.beginPath()
+	ctx.arc(x, y, 5, 0, Math.PI * 2, true);
+	ctx.fillStyle = fill;
+	ctx.fill()
 }
