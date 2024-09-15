@@ -54,8 +54,6 @@ class Player {
 
 		this.fovBorderLeft = this.lookatDir.clone().add(this.planeLeft)
 		this.fovBorderRight = this.lookatDir.clone().add(this.planeRight)
-
-		this.ray = new Vec(0, 0)
 	}
 
 	changeFov(degrees) {
@@ -103,7 +101,7 @@ class Player {
 		const wCtx = wCanvas.getContext('2d')
 		const mCtx = mCanvas.getContext('2d')
 		const width = wCanvas.width
-		const ray = this.ray
+		const ray = new Vec(0, 0)
 		const nextColumn = new Vec(Infinity, Infinity)
 		const nextRow = new Vec(Infinity, Infinity)
 		const rowDelta = new Vec(Infinity, Infinity)
@@ -112,9 +110,8 @@ class Player {
 		for (let x = 0; x <= width; x++) {
 			const cameraX = (x / width) * 2 - 1 
 			ray.copy(this.planeRight).scale(cameraX).add(this.lookatDir)
-			const rPlane = ray.magnitude()
+			const rPlane = ray.magnitude() // ray's distance to plane
 			ray.unit()
-			// ray.draw(mCtx, this.position.x, this.position.y, 'rgba(255,255,0,0.1)', 300, 1)
 			let stepX = ray.x == 0 ? 0 : ray.x / Math.abs(ray.x) // 0, -1 or 1
 			let stepY = ray.y == 0 ? 0 : ray.y / Math.abs(ray.y) // 0, -1 or 1
 
@@ -199,9 +196,8 @@ class Player {
 				const actualWallHeight = 64 // I don't completely get this mazematik
 				const dPlane = 355 // distance from player to projection plane
 
-
 				const projectedHeight = Math.floor((actualWallHeight / perpWall) * dPlane)
-				const playerHeight = 240 // half the screen, so that their line of sight is at center of screen??
+				const playerHeight = 240 // half the screen, so that their line of sight is at center of screen
 				drawLine(wCtx, x, playerHeight + projectedHeight / 2 , x, playerHeight - projectedHeight / 2 , worldMap[row][col])
 			}
 		}
@@ -228,21 +224,40 @@ document.addEventListener('keydown', (e) => {
 			worldCanvas.classList.toggle('small')
 			break;
 
-		case 'w':
-			p1.position.y -= gridSize / 5
+		case 'w': {
+			const step = gridSize / 5
+			// p1.position.y -= step 
+			p1.position.set(p1.position.x + p1.lookatDir.x * step, p1.position.y + p1.lookatDir.y * step)
 			break;
+		}
 
-		case 'a':
-			p1.position.x -= gridSize / 5
+		case 'a': {
+			const step = gridSize / 5
+			const x = p1.position.x
+			const y = p1.position.y
+			p1.position.copy(p1.planeRight).unit().scale(step)
+			p1.position.x = x - p1.position.x
+			p1.position.y = y - p1.position.y
 			break;
+		}
 
-		case 's':
-			p1.position.y += gridSize / 5
+		case 's': {
+			const step = gridSize / 5
+			// p1.position.y -= step 
+			p1.position.set(p1.position.x - p1.lookatDir.x * step, p1.position.y - p1.lookatDir.y * step)
 			break;
+		}
 
-		case 'd':
-			p1.position.x += gridSize / 5
+		case 'd': {
+			const step = gridSize / 5
+			const x = p1.position.x
+			const y = p1.position.y
+			p1.position.copy(p1.planeRight).unit().scale(step)
+			p1.position.x += x
+			p1.position.y += y
 			break;
+		}
+
 		case 'arrowup':
 			castSteps++
 			cSteps.value = castSteps
@@ -302,7 +317,9 @@ function gameLoop(timestamp) {
 
 	p1.see(worldCanvas, mapCanvas)
 
-	playerPosDisplay.innerText = `Pos: ${p1.position.x}, ${p1.position.y}`
+	const playerX = p1.position.x.toFixed(2)
+	const playerY = p1.position.y.toFixed(2)
+	playerPosDisplay.innerText = `Pos: ${playerX}, ${playerY}`
 	lookatDisplay.innerText = `lookat: ${p1.lookatDir.x.toFixed(2)}, ${p1.lookatDir.y.toFixed(2)}`
 	fovDisplay.innerText = `fov: ${p1.fov}`
 
