@@ -214,8 +214,6 @@ function drawLine(ctx, startX, startY, endX, endY, color) {
 }
 
 const p1 = new Player(new Vec(240, 240))
-// console.log(p1.lookatDir.magnitude() * 2)
-// console.log(p1.planeRight.magnitude() * 2)
 
 document.addEventListener('keydown', (e) => {
 	switch (e.key.toLowerCase()) {
@@ -226,35 +224,25 @@ document.addEventListener('keydown', (e) => {
 
 		case 'w': {
 			const step = gridSize / 5
-			// p1.position.y -= step 
 			p1.position.set(p1.position.x + p1.lookatDir.x * step, p1.position.y + p1.lookatDir.y * step)
 			break;
 		}
 
 		case 'a': {
 			const step = gridSize / 5
-			const x = p1.position.x
-			const y = p1.position.y
-			p1.position.copy(p1.planeRight).unit().scale(step)
-			p1.position.x = x - p1.position.x
-			p1.position.y = y - p1.position.y
+			p1.position.set(p1.position.x + p1.lookatDir.y * step, p1.position.y - p1.lookatDir.x * step)
 			break;
 		}
 
 		case 's': {
 			const step = gridSize / 5
-			// p1.position.y -= step 
 			p1.position.set(p1.position.x - p1.lookatDir.x * step, p1.position.y - p1.lookatDir.y * step)
 			break;
 		}
 
 		case 'd': {
 			const step = gridSize / 5
-			const x = p1.position.x
-			const y = p1.position.y
-			p1.position.copy(p1.planeRight).unit().scale(step)
-			p1.position.x += x
-			p1.position.y += y
+			p1.position.set(p1.position.x - p1.lookatDir.y * step, p1.position.y + p1.lookatDir.x * step)
 			break;
 		}
 
@@ -280,8 +268,6 @@ worldCanvas.onmousemove = mousemove
 
 const wheel = (e) => {
 	p1.changeFov(p1.fov + e.deltaY/10)
-	// console.log(p1.lookatDir.magnitude() * 2)
-	// console.log(p1.planeRight.magnitude() * 2)
 }
 worldCanvas.onwheel = wheel
 mapCanvas.onwheel = wheel
