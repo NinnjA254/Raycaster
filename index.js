@@ -1,6 +1,10 @@
 const worldCanvas = document.getElementById('world-canvas')
 const mapCanvas = document.getElementById('map-canvas')
 
+worldCanvas.addEventListener("click", async () => {
+  await worldCanvas.requestPointerLock();
+});
+
 worldCanvas.width = 640
 worldCanvas.height = 480
 mapCanvas.width = 480 
@@ -36,8 +40,7 @@ const worldMap =
 		['red','yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow',null,null,null,null,null,null,null,null,null,null,null,null,null,null,'red'],
 		['red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red','red']
 	];
-let gridSize = mapCanvas.width / worldMap.length 
-// gridSize = 40
+const gridSize = mapCanvas.width / worldMap.length 
 
 function deg2Rad(degrees) {
 	return degrees * (Math.PI / 180)
@@ -45,10 +48,11 @@ function deg2Rad(degrees) {
 class Player {
 	constructor(position) {
 		this.position = position
-		this.lookatDir = new Vec(1, 0) //always unit vector
+		this.lookatDir = new Vec(1, 1).unit() //always unit vector
 		this.fov = 60 
+		this.speed = 100
+		this.boost = 200
 		let planeLength = Math.tan(deg2Rad(this.fov / 2)) * this.lookatDir.magnitude()
-		planeLength = 1
 		this.planeRight = new Vec(-this.lookatDir.y, this.lookatDir.x).scale(planeLength) // perpendicular to lookatDir
 		this.planeLeft = this.planeRight.clone().scale(-1)
 
@@ -61,7 +65,6 @@ class Player {
 		const planeLength = Math.tan(deg2Rad(this.fov / 2)) * this.lookatDir.magnitude()
 		this.planeRight = new Vec(-this.lookatDir.y, this.lookatDir.x).scale(planeLength) // perpendicular to lookatDir
 		this.planeLeft = this.planeRight.clone().scale(-1)
-
 		this.fovBorderLeft.copy(this.lookatDir).add(this.planeLeft)
 		this.fovBorderRight.copy(this.lookatDir).add(this.planeRight)
 	}
@@ -75,7 +78,7 @@ class Player {
 		const newY = this.lookatDir.x * iy + this.lookatDir.y * jy
 		this.lookatDir.set(newX, newY)
 
-		const planeLength = Math.tan(deg2Rad(this.fov / 2))
+		const planeLength = Math.tan(deg2Rad(this.fov / 2)) * this.lookatDir.magnitude()
 		this.planeRight.set(-this.lookatDir.y, this.lookatDir.x).scale(planeLength)
 		this.planeLeft.copy(this.planeRight).scale(-1)
 
@@ -185,10 +188,12 @@ class Player {
 			// current.draw(mCtx, this.position.x, this.position.y, color, 1, 1)
 			current.draw(mCtx, this.position.x, this.position.y, color, 1, 1)
 			if (collision) {
-				// drawing map
-				// mCtx.fillStyle = color
-				// mCtx.fillRect(gridSize * col, gridSize * row, gridSize, gridSize)
-				
+				// drawMap
+
+				// mCtx.strokeStyle = color
+				// mCtx.lineWidth = 2
+				// mCtx.strokeRect(gridSize * col, gridSize * row, gridSize, gridSize)
+
 				// drawing world 
 				const dWall = current.magnitude()
 				const perpWall = (dWall / rPlane) * this.lookatDir.magnitude() //perpendicular wall distance correcting for fisheye effect
@@ -215,53 +220,30 @@ function drawLine(ctx, startX, startY, endX, endY, color) {
 
 const p1 = new Player(new Vec(240, 240))
 
+const keys = {}
 document.addEventListener('keydown', (e) => {
-	switch (e.key.toLowerCase()) {
-		case 'q':
-			mapCanvas.classList.toggle('small')
-			worldCanvas.classList.toggle('small')
-			break;
+	keys[e.key.toLowerCase()] = true
 
-		case 'w': {
-			const step = gridSize / 5
-			p1.position.set(p1.position.x + p1.lookatDir.x * step, p1.position.y + p1.lookatDir.y * step)
-			break;
-		}
-
-		case 'a': {
-			const step = gridSize / 5
-			p1.position.set(p1.position.x + p1.lookatDir.y * step, p1.position.y - p1.lookatDir.x * step)
-			break;
-		}
-
-		case 's': {
-			const step = gridSize / 5
-			p1.position.set(p1.position.x - p1.lookatDir.x * step, p1.position.y - p1.lookatDir.y * step)
-			break;
-		}
-
-		case 'd': {
-			const step = gridSize / 5
-			p1.position.set(p1.position.x - p1.lookatDir.y * step, p1.position.y + p1.lookatDir.x * step)
-			break;
-		}
-
-		case 'arrowup':
-			castSteps++
-			cSteps.value = castSteps
-			break;
-		case 'arrowdown':
-			castSteps--
-			cSteps.value = castSteps
-			break;
-
-		default:
-			break;
+	if (keys['q']) {
+		mapCanvas.classList.toggle('small')
+		worldCanvas.classList.toggle('small')
 	}
+	if (keys['arrowup']) {
+		castSteps++
+		cSteps.value = castSteps
+	}
+	if (keys['arrowdown']) {
+		castSteps--
+		cSteps.value = castSteps
+	}
+})
+document.addEventListener('keyup', (e) => {
+	keys[e.key.toLowerCase()] = false
 })
 
 const mousemove = (e)=> {
-	p1.rotate(e.movementX * 0.01)
+	const rotationDelta = 0.30 / fps
+	p1.rotate(e.movementX * rotationDelta)
 }
 mapCanvas.onmousemove = mousemove
 worldCanvas.onmousemove = mousemove
@@ -298,11 +280,52 @@ function gameLoop(timestamp) {
 	clearCanvas(mapCanvas, mapCtx)
 	clearCanvas(worldCanvas, worldCtx)
 
+	//handle movement
+	const speed =keys['shift'] ? p1.speed + p1.boost : p1.speed
+	const step = speed / fps 
+	if (keys['w']) {
+		const newPosX =  p1.position.x + p1.lookatDir.x * step
+		const newPosY =  p1.position.y + p1.lookatDir.y * step
+		gridX = Math.floor(newPosX / gridSize)
+		gridY = Math.floor(newPosY / gridSize)
+		if (!(worldMap[gridY] && worldMap[gridY][gridX])) { // collision detection
+			p1.position.set(newPosX, newPosY)
+		}
+	}
+	if (keys['a']) {
+		const newPosX =  p1.position.x + p1.lookatDir.y * step
+		const newPosY =  p1.position.y - p1.lookatDir.x * step
+		gridX = Math.floor(newPosX / gridSize)
+		gridY = Math.floor(newPosY / gridSize)
+		if (!(worldMap[gridY] && worldMap[gridY][gridX])) {
+			p1.position.set(newPosX, newPosY)
+		}
+	}
+	if (keys['s']) {
+		const newPosX = p1.position.x - p1.lookatDir.x * step
+		const newPosY = p1.position.y - p1.lookatDir.y * step
+		gridX = Math.floor(newPosX / gridSize)
+		gridY = Math.floor(newPosY / gridSize)
+		if (!(worldMap[gridY] && worldMap[gridY][gridX])) {
+			p1.position.set(newPosX, newPosY)
+		}
+	}
+	if (keys['d']) {
+		const newPosX = p1.position.x - p1.lookatDir.y * step
+		const newPosY = p1.position.y + p1.lookatDir.x * step
+		gridX = Math.floor(newPosX / gridSize)
+		gridY = Math.floor(newPosY / gridSize)
+		if (!(worldMap[gridY] && worldMap[gridY][gridX])) {
+			p1.position.set(newPosX, newPosY)
+		}
+	}
+
 	drawMap(worldMap, mapCtx)
 	p1.draw(mapCtx)
 
 	p1.see(worldCanvas, mapCanvas)
 
+	//dash display
 	const playerX = p1.position.x.toFixed(2)
 	const playerY = p1.position.y.toFixed(2)
 	playerPosDisplay.innerText = `Pos: ${playerX}, ${playerY}`
